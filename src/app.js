@@ -5,9 +5,11 @@ import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRouter from '#routes/auth.route.js';
+import securityMiddleware from './middleware/security.middleware.js';
 
 const app = express();
 
+// Middleware setup
 app.use(helmet());
 app.use(cors());
 app.use(cookieParser());
@@ -18,6 +20,9 @@ app.use(
   morgan('combined', { stream: { write: msg => logger.info(msg.trim()) } })
 );
 
+app.use(securityMiddleware);
+
+// Basic routes
 app.get('/', (req, res) => {
   logger.info('Hello world');
   res.status(200).send('Hello, World!');
