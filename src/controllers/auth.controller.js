@@ -21,7 +21,11 @@ export const signUp = async (req, res, next) => {
     // Auth service
     const user = await createUser({ name, email, password, role });
 
-    const token = jwtToken.sign({ id: user.id, email: user.email, role: user.role });
+    const token = jwtToken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     cookies.set(res, 'token', token);
 
@@ -60,8 +64,12 @@ export const signIn = async (req, res, next) => {
 
     // Auth service
     const user = await authenticateUser(email, password);
-    
-    const token = jwtToken.sign({ id: user.id, email: user.email, role: user.role });
+
+    const token = jwtToken.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
 
     cookies.set(res, 'token', token);
 
@@ -76,11 +84,13 @@ export const signIn = async (req, res, next) => {
         role: user.role,
       },
     });
-    
   } catch (error) {
     logger.error('Sign in error: ', error);
 
-    if (error.message === 'User not found' || error.message === 'Invalid email or password') {
+    if (
+      error.message === 'User not found' ||
+      error.message === 'Invalid email or password'
+    ) {
       return res.status(401).json({ error: 'Invalid credentials' });
     } else {
       res.status(500).json({ error: 'Internal server error' });
@@ -93,10 +103,10 @@ export const signIn = async (req, res, next) => {
 export const signOut = (req, res, next) => {
   try {
     cookies.clear(res, 'token');
-    
+
     logger.info('User signed out successfully');
     res.status(200).json({
-      message: 'User signed out successfully'
+      message: 'User signed out successfully',
     });
   } catch (error) {
     logger.error('Sign out error', error);
